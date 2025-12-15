@@ -1,0 +1,76 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Главная{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <form method="get" class="d-flex">
+        <input type="text" name="q" class="form-control me-2" placeholder="Поиск по логину или теме..." value="{{ query }}">
+        <button type="submit" class="btn btn-danger">Искать</button>
+    </form>
+</div>
+
+<h1 class="mb-3">{% if query %}Результаты поиска по "{{ query }}"{% else %}Рекомендации{% endif %}</h1>
+
+<!-- Пользователи (аккаунты) -->
+{% if users %}
+    <h3>Найденные аккаунты</h3>
+    <div class="row mb-4">
+        {% for user in users %}
+            <div class="col-md-4 mb-3">
+                <div class="card text-center">
+                    {% if user.profile.avatar %}
+                        <img src="{{ user.profile.avatar.url }}" class="card-img-top rounded-circle mx-auto mt-3" style="width: 100px; height: 100px; object-fit: cover;">
+                    {% else %}
+                        <div class="bg-secondary rounded-circle mx-auto mt-3" style="width: 100px; height: 100px;"></div>
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ user.profile.display_name|default:user.username }}</h5>
+                        <a href="{% url 'user_profile' user.username %}" class="btn btn-outline-primary">Посмотреть профиль</a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+
+<!-- Пины -->
+<div class="row">
+    {% for pin in pins %}
+        <div class="col-md-4 mb-3">
+            <div class="card">
+                {% if pin.image %}
+                    <img src="{{ pin.image.url }}" class="card-img-top" alt="{{ pin.title }}">
+                {% elif pin.video %}
+                    <video src="{{ pin.video.url }}" class="card-img-top" controls></video>
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ pin.title }}</h5>
+                    <p class="card-text">{{ pin.description }}</p>
+                    <p>Теги: {{ pin.tags.all|join:", " }}</p>
+                    <small>От: <a href="{% url 'user_profile' pin.user.username %}">{{ pin.user.profile.display_name|default:pin.user.username }}</a></small>
+                </div>
+            </div>
+        </div>
+    {% empty %}
+        <p class="text-muted">Нет подходящих пинов.</p>
+    {% endfor %}
+</div>
+
+<!-- Доски -->
+<div class="row mt-4">
+    {% for board in boards %}
+        <div class="col-md-4 mb-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Доска: {{ board.title }}</h5>
+                    <p>Пины: {{ board.pins.count }}</p>
+                    <small>От: <a href="{% url 'user_profile' board.user.username %}">{{ board.user.profile.display_name|default:board.user.username }}</a></small>
+                </div>
+            </div>
+        </div>
+    {% empty %}
+        <p class="text-muted">Нет подходящих досок.</p>
+    {% endfor %}
+</div>
+{% endblock %}

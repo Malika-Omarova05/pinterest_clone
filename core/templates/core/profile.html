@@ -1,0 +1,66 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Профиль {% if profile_user.profile.display_name %}{{ profile_user.profile.display_name }}{% else %}{{ profile_user.username }}{% endif %}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-body text-center">
+                {% if profile_user.profile.avatar %}
+                    <img src="{{ profile_user.profile.avatar.url }}" class="rounded-circle mb-3" style="width: 150px; height: 150px; object-fit: cover;">
+                {% else %}
+                    <div class="bg-secondary rounded-circle mb-3 mx-auto" style="width: 150px; height: 150px;"></div>
+                {% endif %}
+                <h3>{{ profile_user.profile.display_name|default:profile_user.username }}</h3>
+                <p class="text-muted">@{{ profile_user.username }}</p>
+                <p>{{ profile_user.profile.bio }}</p>
+                {% if is_own_profile %}
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <button type="submit" class="btn btn-primary w-100">Сохранить</button>
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="col-md-8">
+        <h2>Пины пользователя</h2>
+        <div class="row">
+            {% for pin in pins %}
+                <div class="col-md-6 mb-3">
+                    <div class="card">
+                        {% if pin.image %}
+                            <img src="{{ pin.image.url }}" class="card-img-top" alt="{{ pin.title }}">
+                        {% elif pin.video %}
+                            <video src="{{ pin.video.url }}" class="card-img-top" controls></video>
+                        {% endif %}
+                        <div class="card-body">
+                            <h5>{{ pin.title }}</h5>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <p>Нет пинов.</p>
+            {% endfor %}
+        </div>
+
+        <h2 class="mt-4">Доски пользователя</h2>
+        <div class="row">
+            {% for board in boards %}
+                <div class="col-md-6 mb-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5>{{ board.title }}</h5>
+                            <p>Пины: {{ board.pins.count }}</p>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <p>Нет досок.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
