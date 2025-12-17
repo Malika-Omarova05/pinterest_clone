@@ -3,10 +3,69 @@
 {% block title %}Загрузить пин{% endblock %}
 
 {% block content %}
-    <h1>Загрузить пин</h1>
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-primary">Загрузить</button>
-    </form>
+<div class="container mt-5 mb-5 animate__animated animate__fadeInUp">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card shadow-lg border-0 bg-dark text-white hover-card">
+                <div class="card-body p-5">
+                    <h2 class="text-center mb-4 fw-bold">Загрузить пин</h2>
+
+                    {% if form.errors %}
+                        <div class="alert alert-danger animate__animated animate__shakeX">
+                            <strong>Исправьте ошибки:</strong>
+                            <ul class="mb-0">
+                                {% for field in form %}
+                                    {% for error in field.errors %}
+                                        <li>{{ field.label }}: {{ error }}</li>
+                                    {% endfor %}
+                                {% endfor %}
+                                {% for error in form.non_field_errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    {% endif %}
+
+                    <form method="post" enctype="multipart/form-data" novalidate>
+                        {% csrf_token %}
+
+                        <!-- Заголовок -->
+                        <div class="mb-3">
+                            <label for="id_title" class="form-label fw-semibold">Название</label>
+                            <input type="text" name="title" class="form-control bg-secondary text-white" id="id_title" required>
+                        </div>
+
+                        <!-- Описание -->
+                        <div class="mb-3">
+                            <label for="id_description" class="form-label fw-semibold">Описание</label>
+                            <textarea name="description" class="form-control bg-secondary text-white" id="id_description" rows="3"></textarea>
+                        </div>
+
+                        <!-- Изображение -->
+                        <div class="mb-3">
+                            <label for="id_image" class="form-label fw-semibold">Изображение</label>
+                            <input type="file" name="image" class="form-control bg-secondary text-white" id="id_image" accept="image/*">
+                        </div>
+
+                        <!-- Видео -->
+                        <div class="mb-3">
+                            <label for="id_video" class="form-label fw-semibold">Видео</label>
+                            <input type="file" name="video" class="form-control bg-secondary text-white" id="id_video" accept="video/*">
+                        </div>
+
+                        <!-- Теги -->
+                        <div class="mb-3">
+                            <label for="id_tags" class="form-label fw-semibold">Теги</label>
+                            <input type="text" name="tags" class="form-control bg-secondary text-white" id="id_tags" placeholder="Например: дизайн, вдохновение">
+                        </div>
+
+                        <button type="submit" class="btn btn-danger btn-lg w-100 fw-bold hover-scale">
+                            Загрузить
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

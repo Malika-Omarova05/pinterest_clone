@@ -52,11 +52,20 @@ class PinForm(forms.ModelForm):
         }
 
 
+# В forms.py добавьте/исправьте BoardForm для показа только своих пинов
 class BoardForm(forms.ModelForm):
     class Meta:
         model = Board
         fields = ['title', 'pins']
+        widgets = {
+            'pins': forms.CheckboxSelectMultiple(),  # Показывает как чекбоксы
+        }
 
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user', None)  # Получаем пользователя из view
+        super().__init__(*args, **kwargs)
+        if self.user:
+            self.fields['pins'].queryset = Pin.objects.filter(user=self.user)  # Только свои пины
 
 class ProfileForm(forms.ModelForm):
     class Meta:

@@ -1,11 +1,157 @@
+/* Общий фон и текст */
 body {
-    background-color: #f8f9fa;
+    background-color: #0d0d0d;
+    color: #e0e0e0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
+
+/* Карточки */
 .card {
-    border-radius: 15px;
-    overflow: hidden;
+    background-color: #1a1a1a !important; /* тёмно‑серый фон */
+    color: #ffffff; /* белый текст */
 }
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.8);
+    border-color: #b5179e;
+}
+
+/* Изображения */
 .card-img-top {
     height: 200px;
     object-fit: cover;
 }
+
+/* Заголовки */
+h1, h2, h3, h5 {
+    color: #4cc9f0;
+}
+
+/* Кнопки */
+.btn {
+    border-radius: 8px;
+    font-weight: 600;
+    transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
+}
+.btn-primary {
+    background-color: #4361ee;
+    border: none;
+}
+.btn-primary:hover {
+    background-color: #3a0ca3;
+    transform: scale(1.05);
+}
+.btn-danger {
+    background-color: #b5179e;
+    border: none;
+}
+.btn-danger:hover {
+    background-color: #7209b7;
+    transform: scale(1.05);
+}
+
+/* Ссылки */
+a {
+    color: #4cc9f0;
+    text-decoration: none;
+}
+a:hover {
+    color: #b5179e;
+    text-decoration: underline;
+}
+
+/* Формы */
+input.form-control {
+    background-color: #121212;
+    color: #e0e0e0;
+    border: 1px solid #333;
+}
+input.form-control:focus {
+    border-color: #4361ee;
+    box-shadow: 0 0 5px #4361ee;
+}
+
+/* Анимации карточек */
+.hover-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.hover-card:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.7);
+}
+
+/* Анимации изображений */
+.hover-img {
+    transition: transform 0.4s ease;
+}
+.hover-img:hover {
+    transform: scale(1.1) rotate(1deg);
+    animation: wave 1s ease;
+}
+
+/* Аватар glow при наведении */
+.avatar-glow:hover {
+    box-shadow: 0 0 10px #4cc9f0;
+    transition: box-shadow 0.3s ease;
+}
+
+/* Общие эффекты */
+.hover-scale {
+    transition: transform 0.3s ease;
+}
+.hover-scale:hover {
+    transform: scale(1.05);
+}
+.hover-wave:hover {
+    animation: wave 1s ease;
+}
+.hover-bounce:hover {
+    animation: bounce 0.6s;
+}
+
+/* Ключевые анимации */
+@keyframes wave {
+    0% { transform: rotate(0deg); }
+    25% { transform: rotate(3deg); }
+    50% { transform: rotate(-3deg); }
+    75% { transform: rotate(3deg); }
+    100% { transform: rotate(0deg); }
+}
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+}
+
+/* Белый текст */
+.text-white {
+    color: #ffffff !important;
+}
+
+/* Заглушка аватара */
+.avatar-placeholder {
+    background-color: #ffffff;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+}
+
+/* Dropdown двигает вниз */
+.navbar .dropdown-menu {
+    position: static !important;
+    float: none;
+    margin-top: 0;
+    background-color: #1a1a1a;
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.8);
+}
+.dropdown-item {
+    color: #e0e0e0;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+.dropdown-item:hover {
+    background-color: #3a0ca3;
+    color: #fff;
+}
+
+

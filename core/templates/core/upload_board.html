@@ -3,10 +3,66 @@
 {% block title %}Создать доску{% endblock %}
 
 {% block content %}
-    <h1>Создать доску</h1>
-    <form method="post">
+<div class="container mt-4">
+    <h1 class="mb-4 text-white animate__animated animate__fadeInDown">Создать доску</h1>
+
+    {% if form.errors %}
+        <div class="alert alert-danger animate__animated animate__shakeX">
+            {% for field in form %}
+                {% for error in field.errors %}
+                    <p>{{ field.label }}: {{ error }}</p>
+                {% endfor %}
+            {% endfor %}
+            {% for error in form.non_field_errors %}
+                <p>{{ error }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <form method="post" class="animate__animated animate__fadeInUp">
         {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-primary">Создать</button>
+
+        <!-- Название доски -->
+        <div class="mb-3">
+            <label for="id_title" class="form-label text-white fw-semibold">Название доски</label>
+            <input type="text" name="title" class="form-control bg-secondary text-white" id="id_title" required>
+        </div>
+
+        <!-- Кастомное поле pins -->
+        <div class="mb-3">
+            <label class="form-label text-white fw-semibold">Выберите пины (минимум 2):</label>
+            <div class="row">
+                {% for pin in form.pins.field.queryset %}
+                    <div class="col-md-3 mb-3 animate__animated animate__zoomIn">
+                        <div class="card text-center hover-card">
+                            {% if pin.image %}
+                                <img src="{{ pin.image.url }}"
+                                     class="card-img-top hover-img"
+                                     alt="{{ pin.title }}"
+                                     style="height: 150px; object-fit: cover;">
+                            {% elif pin.video %}
+                                <video src="{{ pin.video.url }}"
+                                       class="card-img-top"
+                                       style="height: 150px; object-fit: cover;"
+                                       controls muted></video>
+                            {% else %}
+                                <div class="avatar-placeholder d-flex align-items-center justify-content-center">
+                                    Нет медиа
+                                </div>
+                            {% endif %}
+                            <div class="card-body p-2">
+                                <input type="checkbox" name="pins" value="{{ pin.id }}" id="pin_{{ pin.id }}">
+                                <label for="pin_{{ pin.id }}" class="d-block mb-0 text-white">{{ pin.title }}</label>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-danger btn-lg w-100 fw-bold hover-scale">
+            Создать доску
+        </button>
     </form>
+</div>
 {% endblock %}

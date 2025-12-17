@@ -38,14 +38,6 @@ class Board(models.Model):
     pins = models.ManyToManyField(Pin, related_name='boards')
     created_at = models.DateTimeField(auto_now_add=True)
 
-    def clean(self):
-        if self.pins.count() < 2:
-            raise ValidationError(_('Доска должна содержать минимум 2 пина.'))
-
-    def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
-        self.full_clean()  # Проверка после сохранения M2M
-
     def __str__(self):
         return self.title
 
@@ -57,3 +49,11 @@ class Profile(models.Model):
 
     def __str__(self):
         return self.display_name or self.user.username
+
+class SearchHistory(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    query = models.CharField(max_length=200)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.username}: {self.query}"

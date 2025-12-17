@@ -1,64 +1,103 @@
 {% extends 'core/base.html' %}
 
-{% block title %}Профиль {% if profile_user.profile.display_name %}{{ profile_user.profile.display_name }}{% else %}{{ profile_user.username }}{% endif %}{% endblock %}
+{% block title %}
+Профиль {% if profile_user.profile.display_name %}{{ profile_user.profile.display_name }}{% else %}{{ profile_user.username }}{% endif %}
+{% endblock %}
 
 {% block content %}
 <div class="row">
+    <!-- Левая колонка: профиль -->
     <div class="col-md-4">
-        <div class="card mb-4">
+        <div class="card mb-4 shadow-lg" style="background-color:#1a1a1a; border-radius:15px;">
             <div class="card-body text-center">
-                {% if profile_user.profile.avatar %}
-                    <img src="{{ profile_user.profile.avatar.url }}" class="rounded-circle mb-3" style="width: 150px; height: 150px; object-fit: cover;">
-                {% else %}
-                    <div class="bg-secondary rounded-circle mb-3 mx-auto" style="width: 150px; height: 150px;"></div>
-                {% endif %}
-                <h3>{{ profile_user.profile.display_name|default:profile_user.username }}</h3>
-                <p class="text-muted">@{{ profile_user.username }}</p>
-                <p>{{ profile_user.profile.bio }}</p>
+
+                <!-- Аватар с плюсиком -->
+                <div class="position-relative d-inline-block mb-3">
+                    {% if profile_user.profile.avatar %}
+                        <img src="{{ profile_user.profile.avatar.url }}"
+                             class="rounded-circle"
+                             style="width: 150px; height: 150px; object-fit: cover; border:3px solid #3a0ca3;">
+                    {% else %}
+                        <div class="rounded-circle bg-secondary d-inline-block"
+                             style="width: 150px; height: 150px;"></div>
+                    {% endif %}
+
+                    {% if is_own_profile %}
+                        <!-- Плюсик поверх аватара -->
+                        <label for="id_avatar"
+                               class="btn btn-sm btn-primary position-absolute"
+                               style="bottom:0; right:0; border-radius:50%; width:35px; height:35px; padding:0; font-size:20px; line-height:30px;">
+                            +
+                        </label>
+                        <input type="file" name="avatar" id="id_avatar" class="d-none">
+                    {% endif %}
+                </div>
+
+                <h3 style="color:#ffffff;">{{ profile_user.profile.display_name|default:profile_user.username }}</h3>
+                <p style="color:#ffffff;">@{{ profile_user.username }}</p>
+
                 {% if is_own_profile %}
-                    <form method="post" enctype="multipart/form-data">
+                    <form method="post" enctype="multipart/form-data" class="mt-3 text-start">
                         {% csrf_token %}
-                        {{ form.as_p }}
-                        <button type="submit" class="btn btn-primary w-100">Сохранить</button>
+
+                        <!-- Отображаемое имя -->
+                        <div class="mb-3">
+                            <label for="id_display_name" class="form-label" style="color: #ffffff;">Отображаемое имя</label>
+                            <input type="text" name="display_name" id="id_display_name"
+                                   class="form-control" value="{{ form.display_name.value|default_if_none:'' }}">
+                        </div>
+
+                        <!-- О себе -->
+                        <div class="mb-3">
+                            <label for="id_bio" class="form-label" style="color: #ffffff;">О себе:</label>
+                            <textarea name="bio" id="id_bio" class="form-control" rows="4">{{ form.bio.value|default_if_none:'' }}</textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 mb-2">Сохранить</button>
                     </form>
+
+                    <a href="{% url 'upload_pin' %}" class="btn btn-danger w-100 mb-2">Создать пин</a>
+                    <a href="{% url 'upload_board' %}" class="btn btn-outline-primary w-100">Создать доску</a>
                 {% endif %}
             </div>
         </div>
     </div>
+
+    <!-- Правая колонка: контент -->
     <div class="col-md-8">
-        <h2>Пины пользователя</h2>
+        <h2 class="text-light">Пины пользователя</h2>
         <div class="row">
             {% for pin in pins %}
-                <div class="col-md-6 mb-3">
-                    <div class="card">
+                <div class="col-md-6 mb-3 animate__animated animate__fadeInUp">
+                    <div class="card hover-scale" style="background-color:#1a1a1a; border-radius:12px;">
                         {% if pin.image %}
-                            <img src="{{ pin.image.url }}" class="card-img-top" alt="{{ pin.title }}">
+                            <img src="{{ pin.image.url }}" class="card-img-top hover-wave" alt="{{ pin.title }}">
                         {% elif pin.video %}
                             <video src="{{ pin.video.url }}" class="card-img-top" controls></video>
                         {% endif %}
                         <div class="card-body">
-                            <h5>{{ pin.title }}</h5>
+                            <h5 style="color:#4cc9f0;">{{ pin.title }}</h5>
                         </div>
                     </div>
                 </div>
             {% empty %}
-                <p>Нет пинов.</p>
+                <p style="color:#ffffff;">Нет пинов.</p>
             {% endfor %}
         </div>
 
-        <h2 class="mt-4">Доски пользователя</h2>
+        <h2 class="mt-4 text-light">Доски пользователя</h2>
         <div class="row">
             {% for board in boards %}
-                <div class="col-md-6 mb-3">
-                    <div class="card">
+                <div class="col-md-6 mb-3 animate__animated animate__zoomIn">
+                    <div class="card hover-bounce" style="background-color:#1a1a1a; border-radius:12px;">
                         <div class="card-body">
-                            <h5>{{ board.title }}</h5>
-                            <p>Пины: {{ board.pins.count }}</p>
+                            <h5 style="color:#b5179e;">{{ board.title }}</h5>
+                            <p style="color:#ffffff;">Пины: {{ board.pins.count }}</p>
                         </div>
                     </div>
                 </div>
             {% empty %}
-                <p>Нет досок.</p>
+                <p style="color:#ffffff;">Нет досок.</p>
             {% endfor %}
         </div>
     </div>

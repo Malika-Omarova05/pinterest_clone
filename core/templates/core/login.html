@@ -3,10 +3,34 @@
 {% block title %}Вход{% endblock %}
 
 {% block content %}
-    <h1>Вход</h1>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-primary">Войти</button>
-    </form>
+<div class="d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+    <div class="card shadow-lg animate__animated animate__fadeInDown" style="max-width: 400px; width: 100%; background-color: #1a1a1a; border-radius: 15px;">
+        <div class="card-body">
+            <h1 class="text-center mb-4" style="color: #ffffff;">Вход</h1>
+
+            <form method="post" class="animate__animated animate__fadeInUp">
+                {% csrf_token %}
+
+                <!-- Имя пользователя -->
+                <div class="mb-3">
+                    <label for="id_username" class="form-label" style="color: #ffffff;">Имя пользователя</label>
+                    <input type="text" name="username" class="form-control" id="id_username" required>
+                </div>
+
+                <!-- Пароль -->
+                <div class="mb-3">
+                    <label for="id_password" class="form-label" style="color: #ffffff;">Пароль</label>
+                    <input type="password" name="password" class="form-control" id="id_password" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100 mb-3">Войти</button>
+            </form>
+
+            <div class="text-center">
+                <p style="color: #b5179e;">Нет аккаунта?</p>
+                <a href="{% url 'register' %}" class="btn btn-danger w-100">Регистрация</a>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
