@@ -1,0 +1,52 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Доска: {{ board.title }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'profile' %}" class="text-info fw-bold">Профиль</a></li>
+                    <li class="breadcrumb-item active text-white" aria-current="page">{{ board.title }}</li>
+                </ol>
+            </nav>
+            <h1 class="text-white fw-bold">{{ board.title }}</h1>
+            <p class="text-light opacity-75">Автор: {{ board.user.username }} | Пинов: {{ board.pins.count }}</p>
+        </div>
+
+        {% if is_own_board %}
+        <a href="{% url 'delete_board' board.id %}" class="btn btn-outline-danger shadow-sm"
+           onclick="return confirm('Удалить всю доску?')">
+            Удалить доску
+        </a>
+        {% endif %}
+    </div>
+
+    <div class="row">
+        {% for pin in board.pins.all %}
+            <div class="col-md-3 mb-4">
+                <div class="card bg-dark border-secondary h-100 shadow">
+                    {% if pin.image %}
+                        <img src="{{ pin.image.url }}" class="card-img-top" style="height: 200px; object-fit: cover;">
+                    {% endif %}
+                    <div class="card-body d-flex flex-column">
+                        <h6 class="text-white fw-bold">{{ pin.title }}</h6>
+                        <div class="mt-auto d-flex justify-content-between align-items-center">
+                            <small class="text-light opacity-75">от {{ pin.user.username }}</small>
+                            {% if is_own_board %}
+                                <a href="{% url 'remove_from_board' board.id pin.id %}" class="btn btn-sm btn-link text-danger p-0 text-decoration-none fw-bold">Убрать</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="col-12 text-center py-5">
+                <h3 class="text-light opacity-50">В этой доске пока нет пинов.</h3>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

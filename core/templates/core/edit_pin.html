@@ -1,0 +1,54 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Редактировать: {{ pin.title }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4" style="max-width: 700px;">
+    <div class="card bg-dark text-white p-4 shadow-lg border-secondary">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="h3 mb-0">Редактирование пина</h1>
+            <a href="{% url 'profile' %}" class="btn btn-outline-light btn-sm">Отмена</a>
+        </div>
+
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div class="mb-4 text-center">
+                <label class="form-label d-block text-muted small text-uppercase">Текущее изображение</label>
+                {% if pin.image %}
+                    <img src="{{ pin.image.url }}" class="img-thumbnail bg-black border-secondary" style="max-height: 200px;">
+                {% elif pin.video %}
+                    <video src="{{ pin.video.url }}" class="img-thumbnail bg-black border-secondary" style="max-height: 200px;" controls></video>
+                {% endif %}
+            </div>
+
+            <div class="mb-3">
+                <label for="id_title" class="form-label fw-bold">Заголовок</label>
+                <input type="text" name="title" id="id_title" class="form-control bg-dark text-white border-secondary" value="{{ form.title.value|default:'' }}" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="id_description" class="form-label fw-bold">Описание</label>
+                <textarea name="description" id="id_description" class="form-control bg-dark text-white border-secondary" rows="4">{{ form.description.value|default:'' }}</textarea>
+            </div>
+
+            <div class="mb-3">
+                <label for="id_tags" class="form-label fw-bold">Теги (через запятую)</label>
+                <input type="text" name="tags" id="id_tags" class="form-control bg-dark text-white border-secondary" 
+                       value="{{ form.tags.value|default:'' }}" placeholder="например: дизайн, интерьер, арт">
+            </div>
+
+            <div class="mb-4">
+                <label for="id_image" class="form-label fw-bold">Заменить файл (оставьте пустым, чтобы не менять)</label>
+                <input type="file" name="image" id="id_image" class="form-control bg-dark text-white border-secondary">
+                <small class="text-muted">Можно выбрать новое изображение или видео.</small>
+            </div>
+
+            <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-primary btn-lg fw-bold">Сохранить изменения</button>
+                <a href="{% url 'delete_pin' pin.id %}" class="btn btn-outline-danger" onclick="return confirm('Вы уверены? Пин будет удален навсегда.')">Удалить этот пин</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -58,14 +58,16 @@ class BoardForm(forms.ModelForm):
         model = Board
         fields = ['title', 'pins']
         widgets = {
-            'pins': forms.CheckboxSelectMultiple(),  # Показывает как чекбоксы
+            'pins': forms.CheckboxSelectMultiple(),
         }
 
     def __init__(self, *args, **kwargs):
-        self.user = kwargs.pop('user', None)  # Получаем пользователя из view
+        self.user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
+        # Делаем выбор пинов НЕОБЯЗАТЕЛЬНЫМ
+        self.fields['pins'].required = False
         if self.user:
-            self.fields['pins'].queryset = Pin.objects.filter(user=self.user)  # Только свои пины
+            self.fields['pins'].queryset = Pin.objects.filter(user=self.user)
 
 class ProfileForm(forms.ModelForm):
     class Meta:

@@ -3,67 +3,74 @@
 {% block title %}Главная{% endblock %}
 
 {% block content %}
-<div class="mb-4 animate__animated animate__fadeInDown">
+<div class="mb-4">
     <form method="get" class="d-flex">
-        <input type="text" name="q" class="form-control me-2" placeholder="Поиск по логину или теме..." value="{{ query }}">
-        <button type="submit" class="btn btn-danger">Искать</button>
+        <input type="text" name="q" class="form-control me-2 bg-dark text-white border-secondary" placeholder="Поиск по логину или теме..." value="{{ query }}">
+        <button type="submit" class="btn btn-danger shadow-sm">Искать</button>
     </form>
 </div>
 
-<h1 class="mb-3 animate__animated animate__fadeInLeft text-white">
+<h1 class="mb-3 text-white">
     {% if query %}Результаты поиска по "{{ query }}"{% else %}Рекомендации{% endif %}
 </h1>
 
-<!-- Пины -->
-<h2 class="mt-4 animate__animated animate__fadeInUp text-white">Пины</h2>
 <div class="row">
     {% for pin in pins %}
-        <div class="col-md-4 mb-3 animate__animated animate__fadeInUp">
-            <div class="card hover-scale" style="background-color:#1a1a1a; border-radius:12px;">
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow" style="background-color:#1a1a1a; border-radius:12px; border: 1px solid #333;">
                 {% if pin.image %}
-                    <img src="{{ pin.image.url }}" class="card-img-top hover-wave" alt="{{ pin.title }}">
+                    <img src="{{ pin.image.url }}" class="card-img-top" alt="{{ pin.title }}" style="border-radius:12px 12px 0 0; object-fit: cover; height: 250px;">
                 {% elif pin.video %}
-                    <video src="{{ pin.video.url }}" class="card-img-top" controls></video>
+                    <video src="{{ pin.video.url }}" class="card-img-top" controls style="height: 250px; object-fit: cover;"></video>
                 {% endif %}
-                <div class="card-body">
+
+                <div class="card-body d-flex flex-column">
                     <h5 style="color:#4cc9f0;">{{ pin.title }}</h5>
-                    <p class="text-white">{{ pin.description }}</p>
-                    <p class="text-white">Теги: {{ pin.tags.all|join:", " }}</p>
-                    <small class="text-white">
-                        От:
-                        <a href="{% url 'user_profile' pin.user.username %}" style="color:#b5179e;">
-                            {{ pin.user.profile.display_name|default:pin.user.username }}
-                        </a>
-                    </small>
+                    <p class="text-light small opacity-75">{{ pin.description|truncatechars:100 }}</p>
+
+                    <div class="mt-auto">
+                        <small class="text-white d-block mb-2">
+                            От: <a href="{% url 'user_profile' pin.user.username %}" class="fw-bold" style="color:#f72585; text-decoration:none;">
+                                {{ pin.user.profile.display_name|default:pin.user.username }}
+                            </a>
+                        </small>
+
+                        {% if user.is_authenticated %}
+                        <form action="{% url 'add_to_board' pin.id %}" method="post">
+                            {% csrf_token %}
+                            <div class="input-group input-group-sm shadow-sm">
+                                <select name="board_id" class="form-select bg-dark text-white border-secondary" required>
+                                    <option value="" disabled selected>Сохранить в доску...</option>
+                                    {% for board in user.board_set.all %}
+                                        <option value="{{ board.id }}">{{ board.title }}</option>
+                                    {% endfor %}
+                                </select>
+                                <button class="btn btn-danger" type="submit">OK</button>
+                            </div>
+                        </form>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
         </div>
     {% empty %}
-        <p class="text-white">Нет пинов.</p>
+        <p class="text-white opacity-50 ms-3">Пинов не найдено.</p>
     {% endfor %}
 </div>
 
-<!-- Пользователи -->
 {% if users %}
-    <h3 class="mt-5 animate__animated animate__fadeInRight text-white">Рекомендации пользователей</h3>
-    <div class="row mb-4">
+    <h3 class="mt-5 text-white border-bottom border-secondary pb-2">Пользователи</h3>
+    <div class="row mb-4 mt-3">
         {% for user in users %}
-            <div class="col-md-4 mb-3 animate__animated animate__zoomIn">
-                <div class="card text-center hover-bounce" style="background-color:#1a1a1a; border-radius:12px;">
+            <div class="col-md-3 mb-3 text-center">
+                <div class="card p-3 shadow-sm h-100" style="background-color:#1a1a1a; border-radius:12px; border: 1px solid #333;">
                     {% if user.profile.avatar %}
-                        <img src="{{ user.profile.avatar.url }}"
-                             class="card-img-top rounded-circle mx-auto mt-3 hover-wave"
-                             style="width: 100px; height: 100px; object-fit: cover; border:2px solid #ffffff;">
+                        <img src="{{ user.profile.avatar.url }}" class="rounded-circle mx-auto mb-2" style="width: 80px; height: 80px; object-fit: cover; border: 2px solid #4cc9f0;">
                     {% else %}
-                        <div class="rounded-circle mx-auto mt-3"
-                             style="width: 100px; height: 100px; background-color:#ffffff;"></div>
+                        <div class="rounded-circle mx-auto mb-2 bg-secondary" style="width: 80px; height: 80px;"></div>
                     {% endif %}
-                    <div class="card-body">
-                        <h5 class="card-title text-white">
-                            {{ user.profile.display_name|default:user.username }}
-                        </h5>
-                        <a href="{% url 'user_profile' user.username %}" class="btn btn-outline-primary">Посмотреть профиль</a>
-                    </div>
+                    <h6 class="text-white fw-bold">{{ user.profile.display_name|default:user.username }}</h6>
+                    <a href="{% url 'user_profile' user.username %}" class="btn btn-sm btn-outline-primary mt-2">Профиль</a>
                 </div>
             </div>
         {% endfor %}
